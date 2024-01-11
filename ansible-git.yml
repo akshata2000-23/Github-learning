@@ -1,0 +1,55 @@
+
+- name: Clone repository using the git module
+  hosts: localhost
+  vars:
+  #variable for the eureka ip
+   - new_env: dev4
+  tasks:
+    - name: Clone the repository
+      git:
+        repo: https://github.com/akshata2000-23/Github-learning.git  # Replace with your repo URL
+        dest: gitcode  # Replace with your desired local path
+        update: yes  # Ensure updates if the repo already exists
+    ## Editing contents of file
+    - name: Add new content to the file
+      blockinfile:
+        path: gitcode/config.ini
+        block: |
+          [dev3] {
+          properties: some_prop_here
+          }
+
+    # - name: Initialize Git repository
+    #   git:
+    #     repo: gitcode  # Replace with your local directory path
+    #     state: present
+#creates new branch 
+    - name: Create new branch
+      shell: git checkout -b {{ new_env }} 
+      args:
+        chdir: gitcode
+    - name: Add all files to staging
+      shell: git add .
+      args:
+       chdir: gitcode
+    # - name: Add all files to staging
+    #   git:
+    #     repo: /path/to/gitcode
+    #     add: .
+
+    - name: Commit the code
+      shell: git commit -m "new env commit"
+      args:
+       chdir: gitcode
+
+    # - name: Set remote origin (if not already set)
+    #   git:
+    #     repo: /path/to/gitcode
+    #     remote: origin
+    #     url: https://github.com/akshata2000-23/Github-learning.git  # Replace with your GitHub repo URL
+    #     force: yes  # Force setting the remote
+
+    # - name: Push branch to remote
+    #   git:
+    #     repo: gitcode
+    #     push: origin {{ new_env }}
